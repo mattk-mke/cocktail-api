@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ICocktailDBResponse, IDBCocktailStub } from "../interfaces/thecocktaildb.interface";
 
-export default class CocktailDBService {
+export class CocktailDBService {
     private baseUrl: string = "https://www.thecocktaildb.com/api/json/v1/1";
 
     /**
@@ -26,7 +26,6 @@ export default class CocktailDBService {
                 throw new Error("Invalid response");
             }
         } catch (err) {
-            console.error(err.message);
             return [];
         }
     }
