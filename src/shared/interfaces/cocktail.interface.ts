@@ -8,6 +8,7 @@ export interface ICocktail {
     category: string;
     iba?: string;
     isAlcoholic: boolean;
+    isOptionalAlcoholic: boolean;
     glassType?: string;
     instructions: {
         [key: string]: string;

@@ -60,3 +60,13 @@ export interface IDBIngredient {
     strAlcohol: string;
     strABV?: string;
 }
+
+export interface IDBCocktailStub {
+    idDrink: string;
+    strDrink: string;
+    strDrinkThumb: string;
+}
+
+export interface ICocktailDBResponse<T> {
+    [key: string]: T;
+}
