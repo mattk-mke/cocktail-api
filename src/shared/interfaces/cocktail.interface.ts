@@ -1,3 +1,5 @@
+import { AlcoholOption } from "./thecocktaildb.interface";
+
 export interface ICocktail {
     id: string;
     dateModified: string; // ISO DateTime
@@ -7,8 +9,7 @@ export interface ICocktail {
     videoUrl?: string;
     category: string;
     iba?: string;
-    isAlcoholic: boolean;
-    isOptionalAlcoholic: boolean;
+    alcoholOption: AlcoholOption;
     glassType?: string;
     instructions: {
         [key: string]: string;

@@ -1,5 +1,9 @@
 import axios from "axios";
-import { ICocktailDBResponse, IDBCocktailStub } from "../interfaces/thecocktaildb.interface";
+import {
+    FilterParam,
+    ICocktailDBResponse,
+    IDBCocktailStub
+} from "../interfaces/thecocktaildb.interface";
 
 export class CocktailDBService {
     private baseUrl: string = "https://www.thecocktaildb.com/api/json/v1/1";
@@ -14,10 +18,16 @@ export class CocktailDBService {
         });
     }
 
-    public async filterByIngredient(ingredient: string): Promise<IDBCocktailStub[]> {
+    /**
+     * Fetches cocktails from thecocktaildb api, filtered by the specified parameter and value
+     */
+    public async filterDrinks(param: FilterParam, value: string): Promise<IDBCocktailStub[]> {
         try {
+            if (!param || !value) {
+                throw new Error("Invalid request");
+            }
             const res = await this.baseRequest<IDBCocktailStub[]>("filter", {
-                i: ingredient
+                [param]: value
             });
             const data = res.data;
             if (data && data.drinks) {

@@ -70,3 +70,15 @@ export interface IDBCocktailStub {
 export interface ICocktailDBResponse<T> {
     [key: string]: T;
 }
+
+export enum AlcoholOption {
+    Alcoholic = "Alcoholic",
+    NonAlcoholic = "Non_Alcoholic"
+}
+
+export enum FilterParam {
+    Alcohol = "a",
+    Category = "c",
+    GlassType = "g",
+    Ingredient = "i"
+}
