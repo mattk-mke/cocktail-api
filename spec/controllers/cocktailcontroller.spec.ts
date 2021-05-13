@@ -106,6 +106,7 @@ describe("Cocktail Controller", () => {
         afterEach(resetDB);
 
         it("Should create a new cocktail in the local database", done => {
+            const trinidad = testCocktail;
             axios
                 .get<IPaginatedResponse<ICocktail>>(baseUrl, {
                     responseType: "json",
@@ -115,25 +116,19 @@ describe("Cocktail Controller", () => {
                 })
                 .then(res => {
                     expect(res.data.data.length).toEqual(0);
-                    const trinidad = testCocktail;
                     const body = {
                         cocktail: trinidad
                     };
-                    axios
-                        .post<ICocktail>(baseUrl, body, {
-                            responseType: "json"
-                        })
-                        .then(res => {
-                            expect(res.status).toBe(201);
-                            expect(res.data).toBeDefined();
-                            expect(res.data.id).toBeDefined();
-                            expect(res.data.name).toEqual(trinidad.name);
-                            done();
-                        })
-                        .catch((err: AxiosError) => {
-                            expect(err).toBeNull();
-                            done();
-                        });
+                    return axios.post<ICocktail>(baseUrl, body, {
+                        responseType: "json"
+                    });
+                })
+                .then(res => {
+                    expect(res.status).toBe(201);
+                    expect(res.data).toBeDefined();
+                    expect(res.data.id).toBeDefined();
+                    expect(res.data.name).toEqual(trinidad.name);
+                    done();
                 })
                 .catch(err => {
                     expect(err).toBeNull();
@@ -150,30 +145,63 @@ describe("Cocktail Controller", () => {
             const body = {
                 cocktail: trinidad
             };
+            let newCocktail: ICocktail;
             axios
                 .post<ICocktail>(baseUrl, body, {
                     responseType: "json"
                 })
                 .then(res => {
                     expect(res.status).toBe(201);
-                    const newCocktail = res.data;
+                    newCocktail = res.data;
                     expect(newCocktail.name).toEqual(trinidad.name);
                     const updatedBody = {
                         cocktail: { ...trinidad, name: "Best Trinidad" }
                     };
-                    axios
-                        .put<ICocktail>(`${baseUrl}/${newCocktail.id}`, updatedBody, {
+                    return axios.put<ICocktail>(`${baseUrl}/${newCocktail.id}`, updatedBody, {
+                        responseType: "json"
+                    });
+                })
+                .then(res => {
+                    expect(res.status).toBe(200);
+                    expect(res.data).toBeDefined();
+                    expect(res.data.id).toEqual(newCocktail.id);
+                    expect(res.data.name).toEqual("Best Trinidad");
+                    done();
+                })
+                .catch((err: AxiosError) => {
+                    expect(err).toBeNull();
+                    done();
+                });
+        });
+    });
+
+    describe("DELETE /cocktails/:cocktailId", () => {
+        afterEach(resetDB);
+
+        it("Should remove a cocktail from the local database", done => {
+            const trinidad = testCocktail;
+            const body = {
+                cocktail: trinidad
+            };
+            let newCocktail: ICocktail;
+            axios
+                .post<ICocktail>(baseUrl, body, {
+                    responseType: "json"
+                })
+                .then(res => {
+                    expect(res.status).toBe(201);
+                    newCocktail = res.data;
+
+                    return axios.delete(`${baseUrl}/${newCocktail.id}`);
+                })
+                .then(res => {
+                    expect(res.status).toBe(200);
+                    return axios
+                        .get<ICocktail>(`${baseUrl}/${newCocktail.id}`, {
                             responseType: "json"
                         })
-                        .then(res => {
-                            expect(res.status).toBe(200);
-                            expect(res.data).toBeDefined();
-                            expect(res.data.id).toEqual(newCocktail.id);
-                            expect(res.data.name).toEqual("Best Trinidad");
-                            done();
-                        })
                         .catch((err: AxiosError) => {
-                            expect(err).toBeNull();
+                            expect(err.response?.status).toBe(404);
                             done();
                         });
                 })

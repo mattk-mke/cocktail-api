@@ -182,7 +182,7 @@ export default {
         }
     },
     /**
-     * Searches for a cocktail based on the provided ID
+     * Searches for a cocktail based on the provided cocktailId query parameter
      * First checks local DB, followed by thecocktaildb
      */
     async getCocktail(req: Request, res: Response, next: NextFunction) {
@@ -261,7 +261,7 @@ export default {
         }
     },
     /**
-     * Updates a cocktail based on the payload
+     * Updates a cocktail based on the payload and cocktailId query parameter
      */
     async updateCocktail(req: Request, res: Response, next: NextFunction) {
         try {
@@ -325,6 +325,24 @@ export default {
                 updatedCocktail
             );
             res.status(200).send(savedCocktail);
+        } catch (err) {
+            handleError(res, err);
+        }
+    },
+    /**
+     * Deletes a cocktail based on the cocktailId query parameter
+     */
+    async deleteCocktail(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { cocktailId } = req.params;
+
+            const existingCocktail = lowdb.getItem<ICocktail>("cocktails", cocktailId);
+
+            if (!existingCocktail) {
+                throw new CustomError("Cocktail not found", ErrorCode.NOT_FOUND, 404);
+            }
+            lowdb.removeFromCollection("cocktails", cocktailId);
+            return res.sendStatus(200);
         } catch (err) {
             handleError(res, err);
         }
