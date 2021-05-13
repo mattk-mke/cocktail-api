@@ -4,19 +4,19 @@ export interface ICocktail {
     id: string;
     dateModified: string; // ISO DateTime
     name: string;
-    nameAlternate?: string;
+    nameAlternate: string | null;
     tags: string[];
-    videoUrl?: string;
+    videoUrl: string | null;
     category: string;
-    iba?: string;
+    iba: string | null;
     alcoholOption: AlcoholOption;
-    glassType?: string;
+    glassType: string | null;
     instructions: {
         [key: string]: string;
     };
-    imageUrl?: string;
-    imageSrc?: string;
-    imageAttribution?: string;
+    imageUrl: string | null;
+    imageSrc: string | null;
+    imageAttribution: string | null;
     isCreativeCommonsConfirmed: boolean;
     ingredients: IIngredientStub[];
 }
@@ -29,8 +29,8 @@ export interface IIngredientStub {
 export interface IIngredient {
     id: string;
     name: string;
-    description?: string;
+    description: string | null;
     type: string;
     isAlcohol: boolean;
-    abv?: string;
+    abv: string | null;
 }
