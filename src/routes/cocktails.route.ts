@@ -4,7 +4,8 @@ import cocktailsController from "../controllers/cocktails.controller";
 const router: Router = express.Router();
 
 router.get("/cocktails", cocktailsController.getCocktails);
-router.get("/cocktails/:cocktailId", cocktailsController.getCocktail);
 router.post("/cocktails", cocktailsController.createCocktail);
+router.get("/cocktails/:cocktailId", cocktailsController.getCocktail);
+router.put("/cocktails/:cocktailId", cocktailsController.updateCocktail);
 
 export default router;

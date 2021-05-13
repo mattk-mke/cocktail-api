@@ -1,8 +1,15 @@
 const baseUrl: string = `http://localhost:${process.env.PORT || 3001}/cocktails`;
 import axios, { AxiosError } from "axios";
+import fs from "fs";
 import { IPaginatedResponse } from "../../src/shared/interfaces/api.interface";
 import { ICocktail } from "../../src/shared/interfaces/cocktail.interface";
 import { testCocktail } from "../data/testdata";
+
+function resetDB() {
+    if (process.env.DB_PATH && fs.existsSync(process.env.DB_PATH)) {
+        fs.unlinkSync(process.env.DB_PATH);
+    }
+}
 
 describe("Cocktail Controller", () => {
     let server;
@@ -14,6 +21,8 @@ describe("Cocktail Controller", () => {
     });
 
     describe("GET /cocktails", () => {
+        afterEach(resetDB);
+
         it("Should return a valid response", done => {
             axios
                 .get<IPaginatedResponse<ICocktail>>(baseUrl, { responseType: "json" })
@@ -55,6 +64,8 @@ describe("Cocktail Controller", () => {
     });
 
     describe("GET /cocktails/:cocktailId", () => {
+        afterEach(resetDB);
+
         it("Should return 404 if the ID is not found", done => {
             axios
                 .get<ICocktail>(baseUrl + "/123fakeid", {
@@ -92,6 +103,8 @@ describe("Cocktail Controller", () => {
     });
 
     describe("POST /cocktails", () => {
+        afterEach(resetDB);
+
         it("Should create a new cocktail in the local database", done => {
             axios
                 .get<IPaginatedResponse<ICocktail>>(baseUrl, {
@@ -123,6 +136,48 @@ describe("Cocktail Controller", () => {
                         });
                 })
                 .catch(err => {
+                    expect(err).toBeNull();
+                    done();
+                });
+        });
+    });
+
+    describe("PUT /cocktails/:cocktailId", () => {
+        afterEach(resetDB);
+
+        it("Should update a cocktail in the local database", done => {
+            const trinidad = testCocktail;
+            const body = {
+                cocktail: trinidad
+            };
+            axios
+                .post<ICocktail>(baseUrl, body, {
+                    responseType: "json"
+                })
+                .then(res => {
+                    expect(res.status).toBe(201);
+                    const newCocktail = res.data;
+                    expect(newCocktail.name).toEqual(trinidad.name);
+                    const updatedBody = {
+                        cocktail: { ...trinidad, name: "Best Trinidad" }
+                    };
+                    axios
+                        .put<ICocktail>(`${baseUrl}/${newCocktail.id}`, updatedBody, {
+                            responseType: "json"
+                        })
+                        .then(res => {
+                            expect(res.status).toBe(200);
+                            expect(res.data).toBeDefined();
+                            expect(res.data.id).toEqual(newCocktail.id);
+                            expect(res.data.name).toEqual("Best Trinidad");
+                            done();
+                        })
+                        .catch((err: AxiosError) => {
+                            expect(err).toBeNull();
+                            done();
+                        });
+                })
+                .catch((err: AxiosError) => {
                     expect(err).toBeNull();
                     done();
                 });

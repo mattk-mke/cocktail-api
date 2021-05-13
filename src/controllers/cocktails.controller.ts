@@ -188,7 +188,7 @@ export default {
     async getCocktail(req: Request, res: Response, next: NextFunction) {
         try {
             const { cocktailId } = req.params;
-            const localCocktail = lowdb.getItem("cocktails", cocktailId);
+            const localCocktail = lowdb.getItem<ICocktail>("cocktails", cocktailId);
             if (localCocktail) {
                 return res.send(localCocktail);
             }
@@ -256,6 +256,75 @@ export default {
             };
             const createdCocktail = lowdb.addToCollection<ICocktail>("cocktails", newCocktail);
             res.status(201).send(createdCocktail);
+        } catch (err) {
+            handleError(res, err);
+        }
+    },
+    /**
+     * Updates a cocktail based on the payload
+     */
+    async updateCocktail(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { cocktailId } = req.params;
+
+            const existingCocktail = lowdb.getItem<ICocktail>("cocktails", cocktailId);
+
+            if (!existingCocktail) {
+                throw new CustomError("Cocktail not found", ErrorCode.NOT_FOUND, 404);
+            }
+            if (!req.body || !req.body.cocktail) {
+                throw new CustomError("Missing payload", ErrorCode.MALFORMED_DATA, 400);
+            }
+            const payload: ICocktail = req.body.cocktail;
+            const {
+                name,
+                nameAlternate = null,
+                tags = [],
+                videoUrl = null,
+                category,
+                iba = null,
+                alcoholOption,
+                glassType,
+                instructions = {},
+                imageUrl = null,
+                imageSrc = null,
+                imageAttribution = null,
+                isCreativeCommonsConfirmed,
+                ingredients = []
+            } = payload;
+            if (
+                !name ||
+                !category ||
+                !alcoholOption ||
+                !glassType ||
+                !instructions ||
+                !instructions["EN"] ||
+                !ingredients.length
+            ) {
+                throw new CustomError("Missing required fields", ErrorCode.MALFORMED_DATA, 400);
+            }
+            const updatedCocktail: ICocktail = {
+                id: cocktailId,
+                name,
+                nameAlternate,
+                tags,
+                videoUrl,
+                category,
+                iba,
+                alcoholOption,
+                glassType,
+                instructions,
+                imageUrl,
+                imageSrc,
+                imageAttribution,
+                isCreativeCommonsConfirmed,
+                ingredients
+            };
+            const savedCocktail = lowdb.updateItemInCollection<ICocktail>(
+                "cocktails",
+                updatedCocktail
+            );
+            res.status(200).send(savedCocktail);
         } catch (err) {
             handleError(res, err);
         }
