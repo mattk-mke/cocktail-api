@@ -30,7 +30,7 @@ export interface IIngredient {
     id: string;
     name: string;
     description: string | null;
-    type: string;
+    type: string | null;
     isAlcohol: boolean;
-    abv: string | null;
+    abv: number | null;
 }

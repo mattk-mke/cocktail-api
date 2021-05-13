@@ -1,5 +1,5 @@
-import { ICocktail, IIngredientStub } from "../interfaces/cocktail.interface";
-import { IDBCocktail } from "../interfaces/thecocktaildb.interface";
+import { ICocktail, IIngredient, IIngredientStub } from "../interfaces/cocktail.interface";
+import { IDBCocktail, IDBIngredient } from "../interfaces/thecocktaildb.interface";
 
 export class ConverterService {
     /**
@@ -27,7 +27,7 @@ export class ConverterService {
 
         return {
             id: dbCocktail.idDrink,
-            dateModified: new Date(dbCocktail.dateModified).toISOString(),
+            dateModified: new Date(dbCocktail.dateModified).toISOString(), // convert to standard iso
             name: dbCocktail.strDrink,
             nameAlternate: dbCocktail.strDrinkAlternate,
             tags: (dbCocktail.strTags || "").split(","),
@@ -42,6 +42,20 @@ export class ConverterService {
             imageAttribution: dbCocktail.strImageAttribution,
             isCreativeCommonsConfirmed: dbCocktail.strCreativeCommonsConfirmed === "Yes",
             ingredients
+        };
+    }
+
+    /**
+     * Converts the raw ingredient data from thecocktaildb api into a more useful format
+     */
+    public convertIngredient(dbIngredient: IDBIngredient): IIngredient {
+        return {
+            id: dbIngredient.idIngredient,
+            name: dbIngredient.strIngredient,
+            description: dbIngredient.strDescription,
+            type: dbIngredient.strType,
+            isAlcohol: dbIngredient.strAlcohol === "Yes",
+            abv: dbIngredient.strABV !== null ? +dbIngredient.strABV : null
         };
     }
 }
