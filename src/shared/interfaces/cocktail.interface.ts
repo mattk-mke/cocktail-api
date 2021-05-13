@@ -1,8 +1,8 @@
 import { AlcoholOption } from "./thecocktaildb.interface";
 
 export interface ICocktail {
-    id: string;
-    dateModified: string; // ISO DateTime
+    id?: string;
+    dateModified?: string; // ISO DateTime
     name: string;
     nameAlternate: string | null;
     tags: string[];
@@ -33,4 +33,5 @@ export interface IIngredient {
     type: string | null;
     isAlcohol: boolean;
     abv: number | null;
+    dateModified: string | null;
 }

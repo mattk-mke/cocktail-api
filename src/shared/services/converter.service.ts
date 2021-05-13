@@ -55,7 +55,8 @@ export class ConverterService {
             description: dbIngredient.strDescription,
             type: dbIngredient.strType,
             isAlcohol: dbIngredient.strAlcohol === "Yes",
-            abv: dbIngredient.strABV !== null ? +dbIngredient.strABV : null
+            abv: dbIngredient.strABV !== null ? +dbIngredient.strABV : null,
+            dateModified: null
         };
     }
 }
