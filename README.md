@@ -156,13 +156,29 @@ Response:
 
 ### POST `/cocktails`
 
-Creates a new cocktail and stores it in the local JSON database. Follows the same model as the GET requests
+Creates a new cocktail and stores it in the local JSON database.
+
+Include cocktail data in body, following the same model as the GET requests
+
+```json
+{
+    "cocktail": {...}
+}
+```
 
 Returns the created cocktail with a new ID
 
 ### PUT `/cocktails/:cocktailId`
 
 Updates a cocktail in the local JSON database, given the ID
+
+Include cocktail data in body, following the same model as the GET requests
+
+```json
+{
+    "cocktail": {...}
+}
+```
 
 Returns the updated cocktail data
 
