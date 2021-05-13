@@ -7,7 +7,7 @@
         "start": "ts-node-dev --respawn --transpile-only ./src/server.ts",
         "debug": "ts-node-dev --respawn --inspect -- ./src/server.ts",
         "build": "tsc -p tsconfig.build.json",
-        "test": "jasmine-ts --config=jasmine.json"
+        "test": "PORT=3001 jasmine-ts --config=jasmine.json"
     },
     "repository": {
         "type": "git",

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { handleError } from "../classes/error.class";
+import { CustomError, ErrorCode, handleError } from "../classes/error.class";
 import { IPaginatedResponse } from "../shared/interfaces/api.interface";
 import { ICocktail, ICocktailQuery } from "../shared/interfaces/cocktail.interface";
 import {
@@ -177,6 +177,27 @@ export default {
                 totalCount: results.length
             };
             return res.send(pagination);
+        } catch (err) {
+            return handleError(res, err);
+        }
+    },
+    /**
+     * Searches for a cocktail based on the provided ID
+     * First checks local DB, followed by thecocktaildb
+     */
+    async getCocktail(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { cocktailId } = req.params;
+            const localCocktail = lowdb.getItem("cocktails", cocktailId);
+            if (localCocktail) {
+                return res.send(localCocktail);
+            }
+            const dbCocktail = await cdb.getCocktailById(cocktailId);
+            if (dbCocktail) {
+                const convertedCocktail = converter.convertCocktail(dbCocktail);
+                return res.send(convertedCocktail);
+            }
+            throw new CustomError("Cocktail not found", ErrorCode.NOT_FOUND, 404);
         } catch (err) {
             return handleError(res, err);
         }
