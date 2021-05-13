@@ -1,12 +1,20 @@
 import { ICocktail } from "../../src/shared/interfaces/cocktail.interface";
+import { LowDBService } from "../../src/shared/services/lowdb.service";
 import { testCocktail } from "../data/testdata";
-import { LowDBServiceStub } from "./lowdb.stub";
 
 describe("LowDB Service", () => {
-    let service: LowDBServiceStub;
+    let service: LowDBService;
 
     beforeEach(() => {
-        service = new LowDBServiceStub();
+        service = new LowDBService();
+        service.db
+            .set("cocktails", [])
+            .set("ingredients", [])
+            .set("counts", {
+                ingredients: 0,
+                cocktails: 0
+            })
+            .write();
     });
 
     describe("getCollection()", () => {

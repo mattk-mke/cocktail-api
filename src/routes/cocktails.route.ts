@@ -5,5 +5,6 @@ const router: Router = express.Router();
 
 router.get("/cocktails", cocktailsController.getCocktails);
 router.get("/cocktails/:cocktailId", cocktailsController.getCocktail);
+router.post("/cocktails", cocktailsController.createCocktail);
 
 export default router;

@@ -16,7 +16,8 @@ export class LowDBService {
      * Sets default values on first run
      */
     public init() {
-        this.adapter = new FileSync("lowdb.json");
+        const filePath = process.env.DB_PATH || "lowdb.json";
+        this.adapter = new FileSync(filePath);
         this.db = Lowdb(this.adapter);
         this.db
             .defaults<IDBSchema>({

@@ -201,5 +201,63 @@ export default {
         } catch (err) {
             return handleError(res, err);
         }
+    },
+    /**
+     * Creates a new cocktail based on the payload
+     */
+    async createCocktail(req: Request, res: Response, next: NextFunction) {
+        try {
+            if (!req.body || !req.body.cocktail) {
+                throw new CustomError("Missing payload", ErrorCode.MALFORMED_DATA, 400);
+            }
+            const payload: ICocktail = req.body.cocktail;
+            const {
+                name,
+                nameAlternate = null,
+                tags = [],
+                videoUrl = null,
+                category,
+                iba = null,
+                alcoholOption,
+                glassType,
+                instructions = {},
+                imageUrl = null,
+                imageSrc = null,
+                imageAttribution = null,
+                isCreativeCommonsConfirmed,
+                ingredients = []
+            } = payload;
+            if (
+                !name ||
+                !category ||
+                !alcoholOption ||
+                !glassType ||
+                !instructions ||
+                !instructions["EN"] ||
+                !ingredients.length
+            ) {
+                throw new CustomError("Missing required fields", ErrorCode.MALFORMED_DATA, 400);
+            }
+            const newCocktail: ICocktail = {
+                name,
+                nameAlternate,
+                tags,
+                videoUrl,
+                category,
+                iba,
+                alcoholOption,
+                glassType,
+                instructions,
+                imageUrl,
+                imageSrc,
+                imageAttribution,
+                isCreativeCommonsConfirmed,
+                ingredients
+            };
+            const createdCocktail = lowdb.addToCollection<ICocktail>("cocktails", newCocktail);
+            res.status(201).send(createdCocktail);
+        } catch (err) {
+            handleError(res, err);
+        }
     }
 };
