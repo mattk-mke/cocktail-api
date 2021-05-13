@@ -5,7 +5,7 @@
     "main": "./build/server.js",
     "scripts": {
         "start": "ts-node-dev --respawn --transpile-only ./src/server.ts",
-        "start:docker": "node ./build/server.js",
+        "debug": "ts-node-dev --respawn --inspect -- ./src/server.ts",
         "build": "tsc -p tsconfig.build.json",
         "test": "jasmine-ts --config=jasmine.json"
     },

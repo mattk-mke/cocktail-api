@@ -23,7 +23,7 @@ export class CocktailDBService {
     /**
      * Fetches cocktails from thecocktaildb api, filtered by the specified parameter and value
      */
-    public async filterDrinks(param: FilterParam, value: string): Promise<IDBCocktailStub[]> {
+    public async filterCocktails(param: FilterParam, value: string): Promise<IDBCocktailStub[]> {
         try {
             if (!param || !value) {
                 throw new Error("Invalid request");
@@ -50,9 +50,15 @@ export class CocktailDBService {
             if (!searchText) {
                 throw new Error("Invalid request");
             }
-            const res = await this.baseRequest<IDBCocktail[]>("search", {
-                s: searchText
-            });
+            const params: any = {};
+            if (searchText.length === 1) {
+                // First letter search
+                params.f = searchText;
+            } else {
+                // Full text search
+                params.s = searchText;
+            }
+            const res = await this.baseRequest<IDBCocktail[]>("search", params);
             const data = res.data;
             if (data && data.drinks) {
                 return data.drinks;
@@ -83,6 +89,25 @@ export class CocktailDBService {
             }
         } catch (err) {
             return [];
+        }
+    }
+
+    public async getCocktailById(id: string) {
+        try {
+            if (!id) {
+                throw new Error("Invalid request");
+            }
+            const res = await this.baseRequest<IDBCocktail[]>("lookup", {
+                i: id
+            });
+            const data = res.data;
+            if (data && data.drinks && data.drinks[0]) {
+                return data.drinks[0];
+            } else {
+                throw new Error("Invalid response");
+            }
+        } catch (err) {
+            return null;
         }
     }
 }

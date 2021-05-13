@@ -30,7 +30,7 @@ export class ConverterService {
             dateModified: new Date(dbCocktail.dateModified).toISOString(), // convert to standard iso
             name: dbCocktail.strDrink,
             nameAlternate: dbCocktail.strDrinkAlternate,
-            tags: (dbCocktail.strTags || "").split(","),
+            tags: dbCocktail.strTags ? dbCocktail.strTags.split(",") : [],
             videoUrl: dbCocktail.strVideo,
             category: dbCocktail.strCategory,
             iba: dbCocktail.strIBA,

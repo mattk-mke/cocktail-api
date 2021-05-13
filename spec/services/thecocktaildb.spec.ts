@@ -6,7 +6,7 @@ const service = new CocktailDBService();
 describe("TheCocktailDB Service", () => {
     describe("filterDrinks()", () => {
         it("Should return an array containing results", done => {
-            service.filterDrinks(FilterParam.Ingredient, "Pisco").then(data => {
+            service.filterCocktails(FilterParam.Ingredient, "Pisco").then(data => {
                 expect(data).toEqual(jasmine.arrayContaining([]));
                 const pisco = data.find(d => d.strDrink === "Pisco Sour");
                 expect(pisco).toBeTruthy();
@@ -15,14 +15,14 @@ describe("TheCocktailDB Service", () => {
         });
 
         it("Should return an empty array when the value is missing", done => {
-            service.filterDrinks(FilterParam.Ingredient, "").then(data => {
+            service.filterCocktails(FilterParam.Ingredient, "").then(data => {
                 expect(data).toEqual([]);
                 done();
             });
         });
 
         it("Should return an empty array when the ingredient is invalid", done => {
-            service.filterDrinks(FilterParam.Ingredient, "Posco").then(data => {
+            service.filterCocktails(FilterParam.Ingredient, "Posco").then(data => {
                 expect(data).toEqual([]);
                 done();
             });

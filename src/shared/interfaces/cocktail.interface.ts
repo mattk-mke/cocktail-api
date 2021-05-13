@@ -35,3 +35,10 @@ export interface IIngredient {
     abv: number | null;
     dateModified: string | null;
 }
+
+export interface ICocktailQuery {
+    name: string | null;
+    alcoholOption: AlcoholOption | null;
+    categories: string[] | null;
+    ingredients: string[] | null;
+}
