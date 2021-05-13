@@ -2,7 +2,9 @@ import axios from "axios";
 import {
     FilterParam,
     ICocktailDBResponse,
-    IDBCocktailStub
+    IDBCocktail,
+    IDBCocktailStub,
+    IDBIngredient
 } from "../interfaces/thecocktaildb.interface";
 
 export class CocktailDBService {
@@ -32,6 +34,50 @@ export class CocktailDBService {
             const data = res.data;
             if (data && data.drinks) {
                 return data.drinks;
+            } else {
+                throw new Error("Invalid response");
+            }
+        } catch (err) {
+            return [];
+        }
+    }
+
+    /**
+     * Searches cocktails from thecocktaildb api based on the text input
+     */
+    public async searchCocktails(searchText: string): Promise<IDBCocktail[]> {
+        try {
+            if (!searchText) {
+                throw new Error("Invalid request");
+            }
+            const res = await this.baseRequest<IDBCocktail[]>("search", {
+                s: searchText
+            });
+            const data = res.data;
+            if (data && data.drinks) {
+                return data.drinks;
+            } else {
+                throw new Error("Invalid response");
+            }
+        } catch (err) {
+            return [];
+        }
+    }
+
+    /**
+     * Searches ingredients from thecocktaildb api based on the text input
+     */
+    public async searchIngredients(searchText: string): Promise<IDBIngredient[]> {
+        try {
+            if (!searchText) {
+                throw new Error("Invalid request");
+            }
+            const res = await this.baseRequest<IDBIngredient[]>("search", {
+                i: searchText
+            });
+            const data = res.data;
+            if (data && data.ingredients) {
+                return data.ingredients;
             } else {
                 throw new Error("Invalid response");
             }
