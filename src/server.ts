@@ -16,7 +16,7 @@ const normalizePort = (val: string) => {
 const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
-const server: Server = createServer(app);
+export const server: Server = createServer(app);
 server.listen(port);
 server.on("listening", () => {
     console.log(

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { handleError } from "../classes/error.class";
+import { IPaginatedResponse } from "../shared/interfaces/api.interface";
 import { ICocktail, ICocktailQuery } from "../shared/interfaces/cocktail.interface";
 import {
     AlcoholOption,
@@ -34,14 +35,19 @@ export default {
                 ingredients: ingredients ? (ingredients as string).split(",") : null
             };
 
-            // const pageSize = Math.max(+(req.query.pageSize || 20), 0);
-            // const page = Math.max(+(req.query.page || 1), 0);
-            // const offset = Math.max((page - 1) * pageSize, 0);
+            const pageSize = Math.max(+(req.query.pageSize || 10), 0);
+            const page = Math.max(+(req.query.page || 1), 0);
+            const offset = Math.max((page - 1) * pageSize, 0);
 
             const localCocktails = lowdb.getCollection<ICocktail>("cocktails").filter(cocktail => {
                 if (query.name) {
                     const normalizedName = query.name.toLowerCase();
-                    if (!cocktail.name.toLowerCase().includes(normalizedName)) {
+                    if (query.name.length === 1 && cocktail.name.charAt(0) !== query.name) {
+                        return false;
+                    } else if (
+                        query.name.length > 1 &&
+                        !cocktail.name.toLowerCase().includes(normalizedName)
+                    ) {
                         return false;
                     }
                 }
@@ -77,7 +83,6 @@ export default {
             let isFiltered: boolean = false;
             let dbCocktails: ICocktail[] = [];
             let dbCocktailStubs: IDBCocktailStub[] = [];
-            let results: ICocktail[] = [];
 
             if (query.name) {
                 const nameResults = await cdb.searchCocktails(query.name);
@@ -161,11 +166,17 @@ export default {
                 // @ts-ignore
                 .map(c => converter.convertCocktail(c));
 
-            results = dbCocktails
+            const results: ICocktail[] = dbCocktails
                 .concat(hydratedCocktails)
                 .concat(localCocktails)
                 .sort((a, b) => (a.name > b.name ? 1 : -1));
-            return res.send(results);
+
+            const pagination: IPaginatedResponse<ICocktail> = {
+                data: results.slice(offset, offset + pageSize),
+                hasMore: offset + pageSize < results.length,
+                totalCount: results.length
+            };
+            return res.send(pagination);
         } catch (err) {
             return handleError(res, err);
         }
